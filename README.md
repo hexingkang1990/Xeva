@@ -11,6 +11,9 @@ Integrative Pharmacogenomics Analysis of Patient Derived Xenografts. Mer AS, Ba-
 
 ## How to install
 
+Note: This version of Xeva requires R>=3.6 . If you are looking for R 3.5 version of Xeva, 
+download the source package from: https://figshare.com/s/bc4b892b38c04937b791
+
 - Install latest version of Xeva directly from Github using `devtools`:
 ```
 library(devtools)
@@ -20,5 +23,5 @@ devtools::install_github("bhklab/Xeva")
 ```
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-BiocManager::install("Xeva", version = "3.8")
+BiocManager::install("Xeva", version = "3.9")
 ```

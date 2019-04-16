@@ -15,7 +15,6 @@ vignettes/*.synctex.gz
 vignettes/*concordance.tex
 vignettes/*.toc
 vignettes/*.tex
-vignettes/*.pdf
 vignettes/*.blb
 vignettes/*.blg
 vignettes/*.R
