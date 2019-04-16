@@ -39,7 +39,7 @@ Xeva requires that several packages be installed. All dependencies are available
 <<get_lib, results='hide', message=FALSE, eval=FALSE>>=
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-BiocManager::install("Xeva", version = "3.8")
+BiocManager::install("Xeva", version = "3.9")
 @
 
 The package can also be installed directly form GitHub using devtools:
