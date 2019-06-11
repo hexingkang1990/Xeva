@@ -184,6 +184,7 @@ setResponse <- function(object,
                      concurrent.time=concurrent.time,
                      vol.normal=vol.normal, log.volume=log.volume,
                      verbose=verbose)
+      #cat(sprintf("TGI = %f", sl$value))
       sen$batch[bid, c("TGI")] <- sl$value
     }
   }
@@ -331,7 +332,7 @@ response <- function(object, model.id=NULL, batch=NULL,
       return(rtx)
     }
 
-    ###--------compute abc for batch ---------------------------------------------
+    ###--------compute TGI for batch ---------------------------------------------
     if(res.measure=="TGI")
     {
       rtx <- TGI(contr.volume, treat.volume)

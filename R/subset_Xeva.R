@@ -83,12 +83,14 @@ subsetXeva <- function(object, ids, id.name, keep.batch=TRUE)
   nwModId <- unique( unlist(lapply(expDeNew,
                                    function(x){c(x[["treatment"]],x[["control"]])})))
   newModId <- unique(c(mdn$model.id, nwModId))
+  newModId <- newModId[newModId %in% rownames(md)]
   mdn <- md[newModId, ]
 
   slot(object, "expDesign") <- expDeNew
   slot(object, "experiment") <- slot(object, "experiment")[mdn$model.id]
   slot(object, "model") <- slot(object, "model")[mdn$model.id, ]
-  slot(object, "drug")  <- slot(object, "drug")[slot(object, "drug")$drug.id %in% mdn$drug,]
+  slot(object, "drug")  <- slot(object, "drug")[slot(object, "drug")$drug.id
+                                                %in% mdn$drug,]
   sn <- slot(object, "sensitivity")
   sn$model <- sn$model[sn$model$model.id %in% mdn$model.id, ]
   sn$batch <- sn$batch[sn$batch$batch.name %in% names(expDeNew),]
@@ -107,5 +109,10 @@ subsetXeva <- function(object, ids, id.name, keep.batch=TRUE)
       slot(object, "molecularProfiles")[[mold]] <- mol[, ids2take]
     }
   }
+
+  nonNAExp <- vapply(slot(object, name = "experiment"), function(mod){!is.null(mod)},
+                     FUN.VALUE = logical(1))
+  slot(object, "experiment") <- slot(object, "experiment")[nonNAExp]
+
   return(object)
 }
