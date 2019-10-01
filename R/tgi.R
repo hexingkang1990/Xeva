@@ -20,8 +20,12 @@
 #' @export
 TGI <- function(contr.volume, treat.volume)
 {
-  tgi = (contr.volume[length(contr.volume)] - treat.volume[length(treat.volume)])/
-        (contr.volume[1] - treat.volume[1])
+  tgi=NA
+  if(length(contr.volume)>0 & length(treat.volume)>0)
+  {
+    tgi = (contr.volume[length(contr.volume)] - treat.volume[length(treat.volume)])/
+          (contr.volume[1] - treat.volume[1])
+  }
   rtx <- batch_response_class(name="TGI", value=tgi)
   return(rtx)
 }
