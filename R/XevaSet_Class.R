@@ -222,15 +222,27 @@ createXevaSet <- function(name,
     sessionInfo = sessionInfo()
   )
 
+  cat(sprintf("##--- making experiment slot -------\n"))
   expSlot <- experimentSlotfromDf(experiment)
+
+  cat(sprintf("##--- making model information -------\n"))
   model <- .checkModel(model, expSlot)
+
+  cat(sprintf("##--- making experiment design slot -------\n"))
   expDesign <- .checkExperimentDesign(expDesign)
+
+  cat(sprintf("##--- making sensitivity slot -------\n"))
   sensitivity <-
     .creatSensitivitySlot(modelSensitivity, batchSensitivity, expSlot, expDesign)
+
+  cat(sprintf("##--- making drug slot -------\n"))
   drug <- .checkDrugSlot(drug)
+
+  cat(sprintf("##--- making id mapping slot -------\n"))
   modToBiobaseMap <-
     .checkmodToBiobaseMapSlot(modToBiobaseMap, molecularProfiles)
 
+  cat(sprintf("##--- creating XevaSet -------\n"))
   pxset <- XevaSet(
     annotation = annotation,
     model = model,
