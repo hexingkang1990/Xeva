@@ -271,17 +271,19 @@ plotmRECIST <- function(mat, control.name = NA, control.col="#238b45", drug.col=
                  cell_fun =function(j, i, x, y, width, height, fill)
                  {.custom_cell_fun(x, y, width, height, mat[i,j], colPalette, fill, splitBy,
                                    sortCellValue)
-                 }) + sidePlt$rowPlt
+                 } #) + sidePlt$rowPlt
+                 , right_annotation = sidePlt$rowPlt )
 
+  colVec <- unlist(colPalette)[names(colPalette)]
+  HLeg <- Legend(at = names(colPalette), title = "",
+                 legend_gp = gpar(col = colVec, fill = colVec))
 
   if(draw_plot==TRUE)
   {
-    colVec <- unlist(colPalette)[names(colPalette)]
-    HLeg <- Legend(at = names(colPalette), title = "", legend_gp = gpar(col = colVec, fill = colVec))
     padding = unit(c(2,2,2,2), "mm")
     draw(pltX, heatmap_legend_list = list(HLeg), padding = padding)
 
-  } else{ return(pltX)}
+  } else{ return(list(plot=pltX, legend = HLeg))}
 
 }
 
