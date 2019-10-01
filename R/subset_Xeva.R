@@ -92,8 +92,8 @@ subsetXeva <- function(object, ids, id.name, keep.batch=TRUE)
   slot(object, "drug")  <- slot(object, "drug")[slot(object, "drug")$drug.id
                                                 %in% mdn$drug,]
   sn <- slot(object, "sensitivity")
-  sn$model <- sn$model[sn$model$model.id %in% mdn$model.id, ]
-  sn$batch <- sn$batch[sn$batch$batch.name %in% names(expDeNew),]
+  sn$model <- sn$model[sn$model$model.id %in% mdn$model.id,  , drop=F]
+  sn$batch <- sn$batch[sn$batch$batch.name %in% names(expDeNew), , drop=F]
   slot(object, "sensitivity") <- sn
 
   m2b <- slot(object, "modToBiobaseMap")

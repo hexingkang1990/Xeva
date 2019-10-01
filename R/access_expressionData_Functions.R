@@ -139,7 +139,9 @@ summarizeMolecularProfiles <- function(object, drug, mDataType, tissue=NULL,
 
   if(senType=="batch")
   {
-    stop("not implemented yet")
+    molP <- getBatchAndMolData(object, mDataType, drug, tissue, unique.model,
+                               senType, sensitivity.measure)
+    return(molP)
   }
 
 }
