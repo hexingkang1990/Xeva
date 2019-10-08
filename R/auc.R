@@ -11,6 +11,7 @@
 #'
 #' @param time A \code{vector} of time points recorded for the experiment.
 #' @param volume First \code{vector} of volume.
+#' @param time.normalize If TRUE, AUC value will be divided by max time
 #' @return  Returns \code{angle} and \code{slope} object.
 #' @examples
 #' time  <- c(0, 3, 7, 11, 18, 22, 26, 30, 32, 35)
@@ -20,14 +21,15 @@
 #' auc2 <- AUC(time, volume2)
 #' par(pty="s")
 #' xylimit <- range(c(time, volume1, volume2))
-#' plot(time, volume1, type = "b", xlim = xylimit, ylim = xylimit)
-#' lines(time, volume2, type = "b")
-#' abline(lm(volume1~time))
-#' abline(lm(volume2~time))
+#' plot(time, volume1, type = "b", xlim = xylimit, ylim = xylimit, col="red")
+#' abline(lm(volume1~time), col="red")
+#' lines(time, volume2, type = "b", col="green")
+#' abline(lm(volume2~time), col="green")
 #' @export
-AUC <- function(time, volume)
+AUC <- function(time, volume, time.normalize=TRUE)
 {
   auc <- .trapz_AUC(time, volume)
+  if(time.normalize==TRUE){auc = auc/max(time)}
   rtx <- model_response_class(name = "auc", value = auc)
   return(rtx)
 }
