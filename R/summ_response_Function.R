@@ -33,7 +33,8 @@
 }
 
 
-.summarizePerBatchResponse <- function(object, response.measure = NULL, batch.name=NULL)
+.summarizePerBatchResponse <- function(object, response.measure = NULL,
+                                       batch.name=NULL, summarize=FALSE)
 {
   rtx <- slot(object, "sensitivity")[["batch"]]
   if(!is.null(response.measure))
@@ -48,6 +49,30 @@
       stop(msg)
     }
     rtx <- rtx[rtx$batch.name %in% bn2take, ]
+  }
+
+  if(summarize==TRUE)
+  {
+    if(is.null(response.measure)){stop("specify batch response measure")}
+
+    binf <- batchInfo(object, batch = rtx[,"batch.name"],patient.id = TRUE,
+                      drug = TRUE)
+    rtx$patient.id <- rtx$drug <- NA
+    for(i in 1:nrow(rtx))
+    {
+      b <- binf[[rtx[i,"batch.name"]]]
+      rtx$patient.id[i] <- paste0(b[["patient.id"]], collapse = ";")
+      rtx$drug[i] <- paste0(b[["drug"]], collapse = ";")
+    }
+
+    meltDF <- matrix(data = NA, nrow = length(unique(rtx$drug)),
+                     ncol = length(unique(rtx$patient.id)),
+                     dimnames = list(unique(rtx$drug), unique(rtx$patient.id)))
+
+    for(i in 1:nrow(rtx))
+    { meltDF[rtx$drug[i], rtx$patient.id[i]] <- rtx[i, response.measure] }
+
+    rtx <- meltDF[, !apply(meltDF, 2, function(i)all(is.na(i)))]
   }
   return(rtx)
 }
@@ -85,6 +110,7 @@
 #' @param group.by Default \code{patient.id}. Dictates how the models should be grouped together. See details below.
 #' @param summary.stat Dictates which summary method to use if multiple IDs are found.
 #' @param tissue Name of the tissue. Default \code{NULL}
+#' @param summarize.batch If TRUE, batch response will be summarized as drug patient matrix. Default \code{FALSE}
 #'
 #' @return A \code{matrix} with rows as drug names, column as \code{group.by}. Each cell contains \code{response.measure} for the pair.
 #'
@@ -105,7 +131,8 @@
 summarizeResponse <- function(object, response.measure = "mRECIST",
                               model.id=NULL, batch.id=NULL,
                               group.by="patient.id",
-                              summary.stat=c(";", "mean", "median"), tissue=NULL)
+                              summary.stat=c(";", "mean", "median"), tissue=NULL,
+                              summarize.batch=FALSE)
 {
   summary.stat <- c(summary.stat)[1]
 
@@ -123,7 +150,8 @@ summarizeResponse <- function(object, response.measure = "mRECIST",
   if(rm.type=="batch")
   {
     mat <- .summarizePerBatchResponse(object, response.measure = response.measure,
-                                      batch.name=batch.id)
+                                      batch.name=batch.id,
+                                      summarize=summarize.batch)
     return(mat)
   }
 }

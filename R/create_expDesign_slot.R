@@ -51,5 +51,10 @@ print.pdxBatch <- function(x, ...)
   txt <- sprintf("name = %s\ncontrol = %s\ntreatment = %s\n", x$batch.name,
                  paste0(x$control, collapse = ", "),
                  paste0(x$treatment, collapse = ", "))
+  for(i in names(x))
+  {
+    if(!i %in% c("batch.name", "control", "treatment"))
+    { txt <- sprintf("%s%s = %s\n", txt, i, paste0(x[[i]], collapse = ", ")) }
+  }
   cat(txt)
 }

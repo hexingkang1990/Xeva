@@ -1,3 +1,31 @@
+addExtraBatchInfo <- function(object, btRTX, infoCol)
+{
+  if(!infoCol %in% colnames(modelInfo(object)))
+  { stop(sprintf("%s is not present in modelInfo", infoCol)) }
+  for(b in names(btRTX))
+  {
+    idx = c()
+    if(infoCol!="drug")
+    {
+      if(length(btRTX[[b]]$control)>0)
+      { idx = modelInfo(object)[btRTX[[b]]$control, infoCol] }
+    }
+    if(length(btRTX[[b]]$treatment)>0)
+    { idx = c(idx, modelInfo(object)[btRTX[[b]]$treatment, infoCol]) }
+
+    if(length(idx)>0)
+    {
+      btRTX[[b]][[infoCol]] = names(sort(table(idx), decreasing = T))
+    } #else
+    #{
+    #  btRTX[[b]][[infoCol]] = NA
+    #}
+  }
+  return(btRTX)
+}
+
+
+
 #' Get batch information
 #'
 #' Get batch information from a Xeva dataset.
@@ -6,6 +34,9 @@
 #' @param batch Name of the batch. Default \code{NULL}.
 #' @param model.id Model ID for which need to be searched in the batches. Default \code{NULL}.
 #' @param model.id.type Type of the model ID in a batch. See the Details section below.
+#'
+#' @param patient.id If TRUE, will return patient.id . Default \code{FALSE}.
+#' @param drug If TRUE, will return drug . Default \code{FALSE}.
 #'
 #' @details By default this function will return the names of all the batches present in the
 #' dataset. If a batch specified, it will return the experiment design (control
@@ -35,7 +66,8 @@
 #' @name batchInfo
 setGeneric(name= "batchInfo",
            def = function(object, batch=NULL, model.id=NULL,
-                          model.id.type=c("any", "control", "treatment"))
+                          model.id.type=c("any", "control", "treatment"),
+                          patient.id=FALSE, drug=FALSE)
 {standardGeneric("batchInfo")} )
 
 #' @rdname batchInfo
@@ -43,7 +75,8 @@ setGeneric(name= "batchInfo",
 setMethod( f="batchInfo",
            signature=c(object = "XevaSet"),
            definition=function(object, batch=NULL, model.id=NULL,
-                               model.id.type=c("any", "control", "treatment"))
+                               model.id.type=c("any", "control", "treatment"),
+                               patient.id=FALSE, drug=FALSE)
            {
              if(is.null(batch) & is.null(model.id))
              {
@@ -86,6 +119,16 @@ setMethod( f="batchInfo",
                    stop(msg)
                  }
                  btRTX[[bn]] <- bt
+               }
+
+               if(patient.id==TRUE)
+               {
+                 btRTX <- addExtraBatchInfo(object, btRTX, infoCol="patient.id")
+               }
+
+               if(drug==TRUE)
+               {
+                 btRTX <- addExtraBatchInfo(object, btRTX, infoCol="drug")
                }
                return(btRTX)
              }
