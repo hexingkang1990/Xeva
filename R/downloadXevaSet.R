@@ -34,10 +34,10 @@ getXevaSet <- function(dw.url, saveDir = file.path(".", "XevaSet"),
 #' analysis tools provided in Xeva.
 #'
 #' @examples
-#' downloadXevaSet()
-#' ##to download a dataset
-#' #library(Xeva)
-#' #PDXE_BRCA = downloadXevaSet(name="PDXE_BRCA", saveDir="XevaSet")
+#' # downloadXevaSet()
+#' ### to download a dataset
+#' # library(Xeva)
+#' # PDXE_BRCA = downloadXevaSet(name="PDXE_BRCA", saveDir="XevaSet")
 #'
 #' @param name Character string, the name of the XevaSet to download.
 #' @param saveDir	\code{Character} string with the folder path where the XevaSet should be saved. Defaults to './XevaSet/'. Will create directory if it does not exist.
