@@ -5,12 +5,14 @@
 \title{area under the curve
 \code{AUC} Returns area under the curve}
 \usage{
-AUC(time, volume)
+AUC(time, volume, time.normalize = TRUE)
 }
 \arguments{
 \item{time}{A \code{vector} of time points recorded for the experiment.}
 
 \item{volume}{First \code{vector} of volume.}
+
+\item{time.normalize}{If TRUE, AUC value will be divided by max time}
 }
 \value{
 Returns \code{angle} and \code{slope} object.
@@ -27,8 +29,8 @@ auc1 <- AUC(time, volume1)
 auc2 <- AUC(time, volume2)
 par(pty="s")
 xylimit <- range(c(time, volume1, volume2))
-plot(time, volume1, type = "b", xlim = xylimit, ylim = xylimit)
-lines(time, volume2, type = "b")
-abline(lm(volume1~time))
-abline(lm(volume2~time))
+plot(time, volume1, type = "b", xlim = xylimit, ylim = xylimit, col="red")
+abline(lm(volume1~time), col="red")
+lines(time, volume2, type = "b", col="green")
+abline(lm(volume2~time), col="green")
 }

@@ -24,7 +24,20 @@ addExtraBatchInfo <- function(object, btRTX, infoCol)
   return(btRTX)
 }
 
-
+.convertBatchToDf <- function(btRTX)
+{
+  bndf=data.frame(batch.name=vapply(btRTX, function(i)i$batch.name, FUN.VALUE = character(1)),
+                  treatment=NA, control=NA, patient.id=NA, drug=NA, stringsAsFactors = FALSE)
+  for(i in 1:nrow(bndf))
+  {
+    b = btRTX[[bndf$batch.name[i]]]
+    if(!is.null(b$treatment)){bndf$treatment[i] = paste0(b$treatment, collapse = ";")}
+    if(!is.null(b$control)){bndf$control[i] = paste0(b$control, collapse = ";")}
+    if(!is.null(b$patient.id)){bndf$patient.id[i] = paste0(b$patient.id, collapse = ";")}
+    if(!is.null(b$drug)){bndf$drug[i] = paste0(b$drug, collapse = ";")}
+  }
+  return(bndf)
+}
 
 #' Get batch information
 #'
@@ -37,6 +50,7 @@ addExtraBatchInfo <- function(object, btRTX, infoCol)
 #'
 #' @param patient.id If TRUE, will return patient.id . Default \code{FALSE}.
 #' @param drug If TRUE, will return drug . Default \code{FALSE}.
+#' @param return.df If TRUE, will return a data.frame (see the Details). Default \code{FALSE}.
 #'
 #' @details By default this function will return the names of all the batches present in the
 #' dataset. If a batch specified, it will return the experiment design (control
@@ -49,6 +63,8 @@ addExtraBatchInfo <- function(object, btRTX, infoCol)
 #' batch. It can also be restricted to look only for treatment (or control) arm by
 #' specifying the type.
 #'
+#' If \code{return.df=TRUE}, it will return a data.frame where each batch will be a row.
+#' Multiple model.ids will be merged by ; . It will also return patient.id and drug.
 #'
 #' @examples
 #' data(brca)
@@ -67,7 +83,7 @@ addExtraBatchInfo <- function(object, btRTX, infoCol)
 setGeneric(name= "batchInfo",
            def = function(object, batch=NULL, model.id=NULL,
                           model.id.type=c("any", "control", "treatment"),
-                          patient.id=FALSE, drug=FALSE)
+                          patient.id=FALSE, drug=FALSE, return.df=FALSE)
 {standardGeneric("batchInfo")} )
 
 #' @rdname batchInfo
@@ -76,7 +92,7 @@ setMethod( f="batchInfo",
            signature=c(object = "XevaSet"),
            definition=function(object, batch=NULL, model.id=NULL,
                                model.id.type=c("any", "control", "treatment"),
-                               patient.id=FALSE, drug=FALSE)
+                               patient.id=FALSE, drug=FALSE, return.df=FALSE)
            {
              if(is.null(batch) & is.null(model.id))
              {
@@ -129,6 +145,11 @@ setMethod( f="batchInfo",
                if(drug==TRUE)
                {
                  btRTX <- addExtraBatchInfo(object, btRTX, infoCol="drug")
+               }
+
+               if(return.df==TRUE)
+               {
+                 btRTX <- .convertBatchToDf(btRTX)
                }
                return(btRTX)
              }

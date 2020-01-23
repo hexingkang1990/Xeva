@@ -7,10 +7,12 @@
 \title{Get batch information}
 \usage{
 batchInfo(object, batch = NULL, model.id = NULL,
-  model.id.type = c("any", "control", "treatment"))
+  model.id.type = c("any", "control", "treatment"), patient.id = FALSE,
+  drug = FALSE, return.df = FALSE)
 
 \S4method{batchInfo}{XevaSet}(object, batch = NULL, model.id = NULL,
-  model.id.type = c("any", "control", "treatment"))
+  model.id.type = c("any", "control", "treatment"), patient.id = FALSE,
+  drug = FALSE, return.df = FALSE)
 }
 \arguments{
 \item{object}{The Xeva object from which batch information is obtained.}
@@ -20,6 +22,12 @@ batchInfo(object, batch = NULL, model.id = NULL,
 \item{model.id}{Model ID for which need to be searched in the batches. Default \code{NULL}.}
 
 \item{model.id.type}{Type of the model ID in a batch. See the Details section below.}
+
+\item{patient.id}{If TRUE, will return patient.id . Default \code{FALSE}.}
+
+\item{drug}{If TRUE, will return drug . Default \code{FALSE}.}
+
+\item{return.df}{If TRUE, will return a data.frame (see the Details). Default \code{FALSE}.}
 }
 \value{
 A \code{Vector} with batch names.
@@ -38,6 +46,9 @@ For \code{model.id.type}, the default value \code{'any'} will return all the bat
 where the given model ID is present in any arm (ie. control or treatment) of the
 batch. It can also be restricted to look only for treatment (or control) arm by
 specifying the type.
+
+If \code{return.df=TRUE}, it will return a data.frame where each batch will be a row.
+Multiple model.ids will be merged by ; . It will also return patient.id and drug.
 }
 \examples{
 data(brca)

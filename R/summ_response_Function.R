@@ -61,9 +61,19 @@
     for(i in 1:nrow(rtx))
     {
       b <- binf[[rtx[i,"batch.name"]]]
-      rtx$patient.id[i] <- paste0(b[["patient.id"]], collapse = ";")
-      rtx$drug[i] <- paste0(b[["drug"]], collapse = ";")
+      if(!is.null(b[["patient.id"]]))
+      {
+        rtx$patient.id[i] <- paste0(b[["patient.id"]], collapse = ";")
+      } else {rtx$patient.id[i] <- NA }
+
+      if(!is.null(b[["drug"]]))
+      {
+        rtx$drug[i] <- paste0(b[["drug"]], collapse = ";")
+      } else { rtx$drug[i] <- NA }
     }
+
+    rtx <- rtx[!is.na(rtx$drug), ]
+    rtx <- rtx[!is.na(rtx$patient.id), ]
 
     meltDF <- matrix(data = NA, nrow = length(unique(rtx$drug)),
                      ncol = length(unique(rtx$patient.id)),
@@ -122,6 +132,7 @@
 #' }
 #' For the \code{per model response} output, columns will be \code{model.id} (or \code{group.by}).
 #' For the \code{per batch response} output, the \code{group.by} value can be \code{"batch.name"}.
+#' \code{summarize.batch = TRUE} will return response as drug patient matrix.
 #'
 #' @examples
 #' data(brca)

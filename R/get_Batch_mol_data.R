@@ -32,7 +32,6 @@ getBatchAndMolData <- function(object, mDataType, drug, tissue, unique.model,
   if(is.null(sensitivity.measure))
   { sensitivity.measure <- colnames(sm)[!(colnames(sm) %in% c("model.id", "batch.name"))] }
 
-  ##bid = "X-1004.BGJ398"
   bsmat=data.frame()
   for(i in 1:nrow(sm))
   {

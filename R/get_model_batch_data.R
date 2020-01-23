@@ -45,7 +45,7 @@ getBatchFormatted <- function(object, batch=NULL, patient.id=NULL, drug=NULL,
   }
 }
 
-.normalizeVolume <- function(X)
+.normalizeVolume_old <- function(X)
 {
   if (is.na(X[1]) == TRUE)
   {
@@ -59,6 +59,25 @@ getBatchFormatted <- function(object, batch=NULL, patient.id=NULL, drug=NULL,
   }
   rtx <- (X - X[1]) / X[1]
   return(rtx)
+}
+
+.normalizeVolume <- function(time, volume, atT0)
+{
+  if(atT0==TRUE)
+  { min.posTime <- min(time[time>=0]) }
+
+  if(atT0==FALSE)
+  { min.posTime <- min(time) }
+
+  nrv <- volume[time==min.posTime]
+  if(nrv == 0)
+  {
+    warning("treatment start volume zero, adding 1 to compute volume.normal")
+    nrv <- nrv + 1
+    volume <- volume+1
+  }
+  vn <- (volume - nrv) / nrv
+  return(vn)
 }
 
 #' @import grDevices
@@ -130,12 +149,14 @@ getBatchFormatted <- function(object, batch=NULL, patient.id=NULL, drug=NULL,
 
     if (treatment.only == TRUE & !is.null(mod.data$dose))
     {
-      tretIndx <-
-        extractBetweenTags(mod.data$dose, start.tag = 0, end.tag = 0)
-      mod.data <- mod.data[tretIndx,]
+      #tretIndx <-
+      #  extractBetweenTags(mod.data$dose, start.tag = 0, end.tag = 0)
+      #mod.data <- mod.data[tretIndx,]
+      mod.data <- mod.data[mod.data$time>=0, ]
     }
 
-    mod.data$volume.normal <- .normalizeVolume(mod.data$volume)
+    mod.data$volume.normal <- .normalizeVolume(mod.data$time, mod.data$volume,
+                                               atT0=TRUE)
 
     return(mod.data)
   }
@@ -164,14 +185,13 @@ getBatchFormatted <- function(object, batch=NULL, patient.id=NULL, drug=NULL,
       if (impute.value == TRUE)
       {
         inLst2 <- list()
-        timeVec <- sort(unique(unlist(lapply(
-          rtx, "[[", "time"
-        ))))
+        timeVec <- sort(unique(unlist(lapply(rtx, "[[", "time"))))
         for (mid in names(rtx))
         {
           inLst2[[mid]] <- .smoothModel(rtx[[mid]], timeVec = timeVec, var = var)
-          inLst2[[mid]]$volume.normal <-
-            .normalizeVolume(inLst2[[mid]]$volume)
+          inLst2[[mid]]$volume.normal <- .normalizeVolume( inLst2[[mid]]$time,
+                                                           inLst2[[mid]]$volume,
+                                                           atT0 = TRUE)
         }
         rtx <- inLst2
       }
@@ -183,14 +203,20 @@ getBatchFormatted <- function(object, batch=NULL, patient.id=NULL, drug=NULL,
         if(log.volume==TRUE)
         {
           miD$volume <- log(miD$volume+1)
-          miD$volume.normal <- .normalizeVolume(miD$volume)
+          miD$volume.normal <- .normalizeVolume(miD$time, miD$volume,
+                                                atT0 = TRUE)
         }
 
         if (vol.normal == TRUE)
         {
           miD$volume.raw <- miD$volume
-          miD$volume <- miD$volume.normal
-          miD$volume.normal <- NULL
+          miD$volume <- .normalizeVolume(miD$time, miD$volume, atT0 = TRUE)
+        }
+
+        if (vol.normal == "all")
+        {
+          miD$volume.raw <- miD$volume
+          miD$volume <- .normalizeVolume(miD$time, miD$volume, atT0 = FALSE)
         }
 
         if (!is.null(max.time))
@@ -448,9 +474,9 @@ getBatchFormatted <- function(object, batch=NULL, patient.id=NULL, drug=NULL,
 #' @param patient.id Patient id from the \code{XevaSet}. Default \code{NULL}.
 #' @param drug Name of the drug.
 #' @param control.name Name of drug used as control. Default \code{NULL}.
-#' @param treatment.only Default \code{FALSE}. If \code{TRUE}, give data for non-zero dose periods only (if dose data are available).
+#' @param treatment.only Default \code{FALSE}. If \code{TRUE}, give data for time>=0 only.
 #' @param max.time Maximum time for data.
-#' @param vol.normal If TRUE it will normalize the volume. Default \code{FALSE}.
+#' @param vol.normal Default \code{FALSE} will return raw volume. If TRUE it will normalize the volume by treatment start volume (volume at time>=0). If set to \code{'all'} will use full data to volume normalization.
 #' @param log.volume If TRUE log of the volume will be used. Default \code{FALSE}.
 #' @param return.list Default \code{FALSE} will return a \code{data.frame}.
 #' @param impute.value Default \code{FALSE}. If \code{TRUE}, impute the missing values.
@@ -513,6 +539,12 @@ setMethod(
     if (is.null(model.id) & is.null(batch) & is.null(patient.id))
     {
       msg <- sprintf("'model.id' 'batch' and 'patient.id' all NULL")
+      stop(msg)
+    }
+
+    if(!as.character(vol.normal)%in% c("TRUE","FALSE","all"))
+    {
+      msg <- sprintf("allowed 'vol.normal' values are: TRUE, FALSE,'all' ")
       stop(msg)
     }
 

@@ -76,7 +76,7 @@ print.batchResponse <- function(x, ...)
 #' @export
 setResponse <- function(object,
                         res.measure=c("mRECIST", "slope", "AUC", "angle", "abc", "TGI", "lmm"),
-                        min.time=10, treatment.only=FALSE, max.time=NULL,
+                        min.time=10, treatment.only=TRUE, max.time=NULL,
                         vol.normal=FALSE, impute.value=TRUE, concurrent.time =TRUE,
                         log.volume=FALSE, verbose=TRUE)
 {
@@ -221,7 +221,7 @@ setResponse <- function(object,
 #' @param model.id \code{model.id} for which the durg response is to be computed.
 #' @param batch \code{batch.id} or experiment design for which the drug response is to be computed.
 #' @param res.measure Drug response measure. See `Details` below
-#' @param treatment.only Default \code{FALSE}. If \code{TRUE}, give data for non-zero dose periods only (if dose data are available).
+#' @param treatment.only Default \code{TRUE}. If \code{TRUE}, give data for time>=0 and if \code{FALSE}, uses all avaliable data.
 #' @param max.time Maximum time for data.
 #' @param impute.value Default \code{FALSE}. If \code{TRUE}, impute the missing values.
 #' @param min.time Default \strong{10} days. Used for \emph{mRECIST} computation.

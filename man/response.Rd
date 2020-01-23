@@ -19,7 +19,7 @@ response(object, model.id = NULL, batch = NULL,
 
 \item{res.measure}{Drug response measure. See \code{Details} below}
 
-\item{treatment.only}{Default \code{FALSE}. If \code{TRUE}, give data for non-zero dose periods only (if dose data are available).}
+\item{treatment.only}{Default \code{TRUE}. If \code{TRUE}, give data for time>=0 and if \code{FALSE}, uses all avaliable data.}
 
 \item{max.time}{Maximum time for data.}
 

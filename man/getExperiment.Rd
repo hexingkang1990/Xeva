@@ -31,11 +31,11 @@ getExperiment(object, model.id = NULL, batch = NULL,
 
 \item{control.name}{Name of drug used as control. Default \code{NULL}.}
 
-\item{treatment.only}{Default \code{FALSE}. If \code{TRUE}, give data for non-zero dose periods only (if dose data are available).}
+\item{treatment.only}{Default \code{FALSE}. If \code{TRUE}, give data for time>=0 only.}
 
 \item{max.time}{Maximum time for data.}
 
-\item{vol.normal}{If TRUE it will normalize the volume. Default \code{FALSE}.}
+\item{vol.normal}{Default \code{FALSE} will return raw volume. If TRUE it will normalize the volume by treatment start volume (volume at time>=0). If set to \code{'all'} will use full data to volume normalization.}
 
 \item{log.volume}{If TRUE log of the volume will be used. Default \code{FALSE}.}
 

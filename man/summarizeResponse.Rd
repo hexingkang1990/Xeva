@@ -6,7 +6,8 @@
 \usage{
 summarizeResponse(object, response.measure = "mRECIST",
   model.id = NULL, batch.id = NULL, group.by = "patient.id",
-  summary.stat = c(";", "mean", "median"), tissue = NULL)
+  summary.stat = c(";", "mean", "median"), tissue = NULL,
+  summarize.batch = FALSE)
 }
 \arguments{
 \item{object}{The \code{XevaSet} object.}
@@ -22,6 +23,8 @@ summarizeResponse(object, response.measure = "mRECIST",
 \item{summary.stat}{Dictates which summary method to use if multiple IDs are found.}
 
 \item{tissue}{Name of the tissue. Default \code{NULL}}
+
+\item{summarize.batch}{If TRUE, batch response will be summarized as drug patient matrix. Default \code{FALSE}}
 }
 \value{
 A \code{matrix} with rows as drug names, column as \code{group.by}. Each cell contains \code{response.measure} for the pair.
@@ -37,6 +40,7 @@ There can be two types of drug response measure.
 }
 For the \code{per model response} output, columns will be \code{model.id} (or \code{group.by}).
 For the \code{per batch response} output, the \code{group.by} value can be \code{"batch.name"}.
+\code{summarize.batch = TRUE} will return response as drug patient matrix.
 }
 \examples{
 data(brca)
