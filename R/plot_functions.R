@@ -102,10 +102,10 @@
 
 #' @import ggplot2
 .plotMultipalModels <- function(dfx, color=NULL, major.line.size=1,
-                                aspect.ratio=NULL)
+                                aspect.ratio=NULL, model.lyt=1)
 {
   plt <- ggplot(dfx, aes_string(x="time", y="volume", color= "model.id"))
-  plt <- plt + geom_line(linetype = 1, size=major.line.size)+ geom_point()
+  plt <- plt + geom_line(linetype = model.lyt, size=major.line.size)+ geom_point()
 
   if(!is.null(color))
   { plt <- plt+scale_color_manual(values = color) }
@@ -221,6 +221,7 @@ dosePlot <- function(object, model.id, max.time=NULL, treatment.only=FALSE,
 #' @param aspect.ratio Default \code{1} will create a plot of equal width and height.
 #' @param minor.line.size Line size for minor lines. Default \code{0.5}.
 #' @param major.line.size Line size for major lines. Default \code{0.7}.
+#' @param model.lyt Line type for models. Default \code{"dotted"}.
 #'
 #' @return A ggplot2 plot with control and treatment batch data.
 #'
@@ -243,7 +244,8 @@ plotPDX <- function(object, batch=NULL,
                     title="", xlab = "Time", ylab = "Volume",
                     log.y=FALSE, SE.plot = c("all", "none", "errorbar", "ribbon"),
                     aspect.ratio=c(1, NULL),
-                    minor.line.size=0.5, major.line.size=0.7)
+                    minor.line.size=0.5, major.line.size=0.7,
+                    model.lyt="dotted")
 {
   if(!is.null(model.id))
   {
@@ -254,7 +256,8 @@ plotPDX <- function(object, batch=NULL,
 
     plt <- .plotMultipalModels(dfx, color=model.color,
                                major.line.size=major.line.size,
-                               aspect.ratio=aspect.ratio)
+                               aspect.ratio=aspect.ratio,
+                               model.lyt=model.lyt)
     plt
   } else
   {
@@ -268,7 +271,8 @@ plotPDX <- function(object, batch=NULL,
               log.y=log.y,
               SE.plot =SE.plot,
               aspect.ratio=aspect.ratio,
-              minor.line.size=minor.line.size, major.line.size=major.line.size)
+              minor.line.size=minor.line.size, major.line.size=major.line.size,
+              model.lyt=model.lyt)
   }
 
 }
@@ -284,7 +288,8 @@ plotBatch <- function(object, batch=NULL, patient.id=NULL, drug=NULL, control.na
                       log.y=FALSE,
                       SE.plot = c("all", "none", "errorbar", "ribbon"),
                       aspect.ratio=c(1, NULL),
-                      minor.line.size=0.5, major.line.size=0.7)
+                      minor.line.size=0.5, major.line.size=0.7,
+                      model.lyt="dotted")
 {
   SE.plot <- match.arg(SE.plot)
   aspect.ratio <- aspect.ratio[1]
@@ -305,6 +310,7 @@ plotBatch <- function(object, batch=NULL, patient.id=NULL, drug=NULL, control.na
                      title=title, xlab = xlab, ylab = ylab,
                      log.y=log.y, drgName=drug, #.name,
                      SE.plot = SE.plot, aspect.ratio=aspect.ratio,
+                     modelLyt= model.lyt,
                      minor.line.size=minor.line.size,
                      major.line.size=major.line.size)
 }
